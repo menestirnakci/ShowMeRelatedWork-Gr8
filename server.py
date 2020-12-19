@@ -35,7 +35,15 @@ def dashboard_page():
 
 @app.route("/graph")
 def graph_page(url):
-    
+    try:
+        myob = UrlSearch.UrlSearch(url)
+        myob.get_your_paper()
+        myob.get_all_citas()
+        myob.get_all_ref()
+    except:
+        flash('Warning!')
+        flash('Please check your URL!')
+        return render_template("dashboard.html")
 
     myob = UrlSearch.UrlSearch(url)
     myob.get_all_citas()
