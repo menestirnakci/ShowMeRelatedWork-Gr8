@@ -43,6 +43,7 @@ def graph_page(url):
     except:
         flash('Warning!')
         flash('Please check your URL!')
+        flash('Please check your URL!')
         return render_template("dashboard.html")
 
     myob = UrlSearch.UrlSearch(url)
