@@ -63,9 +63,6 @@ def graph_page(url):
     cursor=[]
     for i in range(lengt):
         cursor.append(myob.all_citas[i])
-    if len(cursor) == 0:
-        flash('Please check your URL!')
-        redirect(url_for('dashboard_page'))
     return render_template("graph.html",cursor=cursor)
 
 class LoginForm(FlaskForm):
