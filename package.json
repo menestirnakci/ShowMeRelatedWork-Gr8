@@ -4,7 +4,7 @@
   "description": "This repository contains a template project for the Database Systems course\r of the Istanbul Technical University Computer Engineering Department.\r The project uses the Python language, the Flask web application framework,\r and the PostgreSQL database.",
   "main": "index.js",
   "scripts": {
-    "start": "node ./index.js --config ./parse-dashboard-config.json --allowInsecureHTTP=1"
+    "start": "showmerelatedwork-heroku --config ./showmerelatedwork-heroku.json --allowInsecureHTTP=1"
   },
   "repository": {
     "type": "git",
