@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+     <title>All Users</title>
+<!-- 
+
+Get Ready Template
+
+https://templatemo.com/tm-521-get-ready
+
+-->
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+     <meta name="description" content="">
+     <meta name="keywords" content="">
+     <meta name="team" content="">
+     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+     <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+     <link rel="stylesheet" href="{{url_for('static',filename='css/vegas.min.css')}}">
+     <link rel="stylesheet" href="{{url_for('static',filename='css/font-awesome.min.css')}}">
+     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+
+ 
+    <!------ Include the above in your HEAD tag ---------->
+
+    <link href="http://cdn.phpoll.com/css/animate.css" rel="stylesheet">
+     
+
+     <!-- MAIN CSS -->
+
+     <!-- <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">-->
+    <link rel="stylesheet" href="{{url_for('static',filename='css/users.css')}}">
+    
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+
+   <!----------------------------------------------------------------------------------------->
+   
+
+   
+
+</head>
+<body>
+
+     <!-- PRE LOADER -->
+     <section class="preloader">
+          <div class="spinner">
+
+               <span class="spinner-rotate"></span>
+               
+          </div>
+     </section>
+
+
+     <!-- <GRID LINE -->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+      <div class="navbar-header">
+      
+      </button>
+      <div class="countdown" >
+        <a class="navbar-brand" style="position: absolute; top: 3px; position: absolute; left: 10px;" href="{{ url_for('dashboard_page') }}" >Show Me Related Work</a>
+        {% if not current_user.is_authenticated %}
+                          <span class="Login" style="font-size: larger;">
+                               
+                               <a style="position: absolute; top: 5px; position: absolute; right: 0;" class="w3-button w3-indigo w3-round" href="{{ url_for('login_page') }}">Login</a>
+                          </span>
+                     
+                     {% else %}
+                     
+                          <span class="Login" style="font-size: larger;">
+                            
+                               <a style="position: absolute; top: 5px; position: absolute; right: 5px;"class="w3-button w3-indigo w3-round" href="{{ url_for('home_page') }}">Log Out</a>
+                          </span>
+                          
+                          <span class="Login" style="font-size: larger;">
+                            <a style="position: absolute; top: 5px; position: absolute; right: 105px;" class="w3-button w3-indigo w3-round" href="{{ url_for('my_profile_page') }}">Profile</a>
+                       </span>
+                          
+                          {% endif %}
+      </div>
+    </div>
+    </div>
+  </nav>
+<!--    <section class="grid">
+         <div class="container">
+            <div class="row">
+
+              <div class="col-md-2 col-sm-2">
+                <div class="grid-line"></div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="grid-line"></div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="grid-line"></div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="grid-line"></div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="grid-line"></div>
+              </div>
+
+            </div>
+         </div>
+    </section>
+
+
+    <div class="menu-bg"></div>
+    <div class="menu-burger">☰</div>
+
+
+    <div class="menu-items">
+       <div class="container">
+         <div class="row">
+           <div class="col-md-offset-8 col-md-4 col-sm-6">
+            <a class="w3-button w3-white w3-round"href="{{ url_for('login_page') }}">Login</a>
+             <ul class="menu">
+                
+            </ul>
+           </div>
+
+           <div class="col-md-2 col-sm-3">
+            <a class="w3-button w3-white w3-round"href="{{ url_for('login_page') }}">Login</a>
+           </div> 
+
+           <div class="col-md-12 col-sm-12">
+             <ul class="social-icon">
+              <li class="line"></li>
+               
+             </ul>
+           </div>
+         </div>
+       </div>
+    </div>
+ 
+
+    
+    <div class="menu-items"> 
+        <ul class="countdown">
+                      {% if not current_user.is_authenticated %}
+                           <span class="Login">
+                                <a class="w3-button w3-indigo w3-round" href="{{ url_for('login_page') }}">Login</a>
+                           </span>
+                      
+                      {% else %}
+                      
+                           <span class="Login">
+                                <a class="w3-button w3-indigo w3-round" href="{{ url_for('home_page') }}">Log Out</a>
+                           </span>
+                           <span class="Login">
+                               <a class="w3-button w3-indigo w3-round" href="{{ url_for('my_profile_page') }}">Profile</a>
+                          </span>
+                           {% endif %}
+                      
+                 </ul>
+    </div>
+-->
+    
+     <!-- HOME -->
+
+
+      <!-- Breadcrumb -->
+     
+      <!-- /Breadcrumb -->
+<div class="container">
+<div class="main-body">
+     <h1 style="text-align: center; color: rgba(14, 27, 100, 0.877);" class="title" >All Users</h1><br>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 gutters-sm">
+      	{% for row in cursor %}
+        <div class="col mb-3">
+        	
+          <div class="card">
+               {% if row[3] == 'female' %}
+               <img src="https://www.solidbackgrounds.com/images/1024x768/1024x768-cyber-grape-solid-color-background.jpg" alt="Cover" class="card-img-top">
+		      {% else  %}
+		      <img src="https://www.solidbackgrounds.com/images/1024x768/1024x768-dark-sky-blue-solid-color-background.jpg" alt="Cover" class="card-img-top">
+		      {%endif%}
+            
+
+            <div class="card-body text-center">
+            {% if username == row[2] %}
+             <a style="color:orange;" href="{{ url_for('my_profile_page')}}"> 
+
+             	 {% if row[3] == 'male' %}
+		      <img src="https://cdn0.iconfinder.com/data/icons/professional-avatar-5/48/3d_modeling_male_avatar_men_character_professions-512.png" style="width:100px;margin-top:-65px" alt="User" class="img-fluid img-thumbnail rounded-circle border-0 mb-3"style="width:100px;margin-top:-65px" alt="User" class="img-fluid img-thumbnail rounded-circle border-0 mb-3">
+		      {% else %}
+		      <img src="https://winstemplymouth.org/wp-content/uploads/2018/02/Female-Avatar-5-e1518176677210.png" style="width:100px;margin-top:-65px" alt="User" class="img-fluid img-thumbnail rounded-circle border-0 mb-3">
+		      {%endif%}
+
+
+
+             </a>
+              {% else %}
+              <a style="color:orange;" href="{{ url_for('user_key')}}/{{row[2]}}">
+              	
+			{% if row[3] == 'male' %}
+		      <img src="https://cdn0.iconfinder.com/data/icons/professional-avatar-5/48/3d_modeling_male_avatar_men_character_professions-512.png" style="width:100px;margin-top:-65px" alt="User" class="img-fluid img-thumbnail rounded-circle border-0 mb-3"style="width:100px;margin-top:-65px" alt="User" class="img-fluid img-thumbnail rounded-circle border-0 mb-3">
+		      {% else %}
+		      <img src="https://winstemplymouth.org/wp-content/uploads/2018/02/Female-Avatar-5-e1518176677210.png" style="width:100px;margin-top:-65px" alt="User" class="img-fluid img-thumbnail rounded-circle border-0 mb-3">
+		      {%endif%}
+
+              </a>
+              {% endif %}
+              <h5 class="card-title"><strong>{{row[0]}} {{row[1]}}</strong></h5>
+              
+              {% if username == row[2] %}
+              	<p class="text-secondary mb-1"><strong style="color:orange;">It is you !</strong></p>
+               {% else %}
+               <p class="text-secondary mb-1"><strong><a style="color:orange;" href="{{ url_for('user_key')}}/{{row[2]}}">Click here </a> for the profile page of user '{{row[2]}}' </strong></p>
+               {% endif %}
+               </div>
+               {% if username != row[2] %}
+                <div  style="margin: auto; ">
+                	
+               {%if row[4] != None  %}
+            <form method='POST'>
+                         <button class="w3-button w3-green w3-round" value="{{row[2]}}" name="unfollow"><strong style="color:seashell;">Unfollow</strong></button>
+                    
+                    </form>
+               {% else %}
+                    
+                    <form method='POST'>
+                         <td><button  class="w3-button w3-blue w3-round" value="{{row[2]}}" name="follow"><strong style="color:seashell;">Follow</strong></button></td>
+                    
+                    </form>
+                         
+
+                    {% endif %}
+                   
+                    </div>
+                    {% endif %}
+                    <br>
+        </div>
+          
+    </div>
+    {% endfor %}
+    </div>
+    </div>
+
+        
+</body>
+</html>
+
+
+
+
+
+

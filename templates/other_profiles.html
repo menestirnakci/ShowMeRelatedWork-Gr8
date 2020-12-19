@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+     <title>Other Profiles</title>
+<!-- 
+
+Get Ready Template
+
+https://templatemo.com/tm-521-get-ready
+
+-->
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+     <meta name="description" content="">
+     <meta name="keywords" content="">
+     <meta name="team" content="">
+     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+     <link rel="stylesheet" href="{{url_for('static',filename='css/profile.css')}}">
+     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+     <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+     <link rel="stylesheet" href="{{url_for('static',filename='css/vegas.min.css')}}">
+     <link rel="stylesheet" href="{{url_for('static',filename='css/font-awesome.min.css')}}">
+
+     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+    <link href="http://cdn.phpoll.com/css/animate.css" rel="stylesheet">
+     
+
+     <!-- MAIN CSS -->
+     <link rel="stylesheet" href="{{url_for('static',filename='css/profile2.css')}}">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+     <style>
+          .w3-btn {width:150px;}
+          .overlay:after {
+	  content: '';
+	  position: absolute;
+	  left: 0;
+	  top: 0;
+	  right: 0;
+	  bottom: 0;
+	  background: rgba(52, 10, 92, 0.651);
+	}
+          </style>
+</head>
+{% if cursor == 'male' %}
+      <style>
+        .w3-btn {width:150px;}
+        .overlay:after {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(51,153,204, 0.5);
+        }
+        </style>
+      {% endif %}
+<body style="background-color:#e8e8e8;" >
+  <div class="countdown">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+      <div class="navbar-header">
+      
+        <a class="navbar-brand" style="position: absolute; top: 0; position: absolute; left: 10px;" href="{{ url_for('dashboard_page') }}">Show Me Related Work</a>
+
+          <span class="Login" style="font-size: larger;">
+             <a style="position: absolute; top: 5px; position: absolute; right: 0;" class="w3-button w3-indigo w3-round" href="{{ url_for('home_page') }}">Log Out</a>
+        </span>
+        <span class="Login" style="font-size: larger;">
+          <a style="position: absolute; top: 5px; position: absolute; right: 100px;" class="w3-button w3-indigo w3-round" href="{{ url_for('my_profile_page') }}">Profile</a>
+     </span>
+      </div>
+      
+    </div>
+  </nav>
+</div>
+<div class="muck-up">
+  <div class="overlay"></div>
+  <div class="top">
+    <div class="nav">
+      <span class="ion-android-menu"></span>
+      <p style="color: seashell;">Other Profiles</p>
+      <span class="ion-ios-more-outline"></span>
+    </div>
+    <div class="user-profile">
+       {% if cursor == 'male' %}
+      <img src="https://cdn0.iconfinder.com/data/icons/professional-avatar-5/48/3d_modeling_male_avatar_men_character_professions-512.png" >
+      {% else %}
+      <img src="https://winstemplymouth.org/wp-content/uploads/2018/02/Female-Avatar-5-e1518176677210.png" >
+      {%endif%}
+      <div class="user-details">
+            <h3>{{ username }}</h3>
+      </div>
+    </div>
+  </div>
+  
+  <div class="clearfix"></div>
+  <div class="bottom">
+    <div class="title">
+    </div>
+    <ul class="tasks" style="font-size: large;">
+      <li >
+        <a style="font-size: larger;" class="task-title" href="{{ url_for('about_page')}}/{{ username }}">About</a>
+        
+      </li>
+      <li>
+        <a style="font-size: larger;" class="task-title" href="{{ url_for('followed_users_page') }}/{{ username }}">Followed Users</a>
+        
+      </li>
+      <li >
+        <a style="font-size: larger;" class="task-title" href="{{ url_for('bookmarks_page') }}/{{ username }}">Bookmarks</a>
+       
+      </li>
+
+      
+
+    </ul>
+  </div>
+</div>
+
+     <!-- SCRIPTS -->
+     <script src="{{url_for('static',filename='js/profile.js')}}"></script>
+     <script src="{{url_for('static',filename='js/jquery.js')}}"></script>
+     <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+     <script src="{{url_for('static',filename='js/vegas.min.js')}}"></script>
+     <script src="{{url_for('static',filename='js/countdown.js')}}"></script>
+     <script src="{{url_for('static',filename='js/init.js')}}"></script>
+     <script src="{{url_for('static',filename='js/custom.js')}}"></script>
+
+<script>
+var dt = new Date();
+document.getElementById("datetime").innerHTML = (("0"+(dt.getMonth()+1)).slice(-2)) +"/"+ (("0"+dt.getDate()).slice(-2)) +"/"+ (dt.getFullYear()) +" "+ (("0"+dt.getHours()+1).slice(-2)) +":"+ (("0"+dt.getMinutes()+1).slice(-2));
+</script>
+</body>
+</html>
