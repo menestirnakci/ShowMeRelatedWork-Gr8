@@ -98,6 +98,11 @@ https://templatemo.com/tm-521-get-ready
         width: 75%;
         margin-top: 6px;
       }
+      .col-11 {
+        float: left;
+        width: 50%;
+        margin-top: 6px;
+      }
       
       /* Clear floats after the columns */
       .row:after {
@@ -246,6 +251,15 @@ https://templatemo.com/tm-521-get-ready
               <div class="form-group">
                 <div class="col-50">
                   <textarea id="subject" placeholder="About you" style="height:200px" class="form-control" type="text" placeholder="About you"  value="{{about}}" name="about" maxlength="500"></textarea>
+                </div>
+                <div class="col-11">
+                  <h4 style= "text-align: left; color: #dd5;" class="title">City: </h4>
+                  <input type="text" id="city" size="10" class="form-control" placeholder="City"  value="{{city}}" name="city" maxlength="80"></input>
+                  <br> <h4 style= "color: #dd5;" class="title">E-mail: </h4>
+                  <input type="text" id="email" size="10" class="form-control" placeholder="E-mail"  value="{{email}}" name="email" maxlength="80"></input>
+                  <br>
+                  <input type="text" id="uni" size="10" class="form-control" placeholder="University"  value="{{uni}}" name="uni" maxlength="80"></input>
+                  <br>
                 </div>
               </div>
 

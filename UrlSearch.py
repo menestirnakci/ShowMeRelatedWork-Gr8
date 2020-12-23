@@ -24,6 +24,8 @@ class UrlSearch(object):
         self.request_page_text = None
         self.list_of_citas = []
         self.all_citas = []
+        self.all_references = []
+        self.your_article = []
     def get_page(self, url=None):
         if self.url == None and url == None:
             raise NoUrlError('Provide a Url')
@@ -111,4 +113,9 @@ referanslar
 key word search
 paper linkler for download
 download graph
+
+ BUg ########################################### 
+/citations
+/references
+
 '''

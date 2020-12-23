@@ -94,81 +94,7 @@ https://templatemo.com/tm-521-get-ready
     </div>
     </div>
   </nav>
-<!--    <section class="grid">
-         <div class="container">
-            <div class="row">
 
-              <div class="col-md-2 col-sm-2">
-                <div class="grid-line"></div>
-              </div>
-              <div class="col-md-2 col-sm-2">
-                <div class="grid-line"></div>
-              </div>
-              <div class="col-md-2 col-sm-2">
-                <div class="grid-line"></div>
-              </div>
-              <div class="col-md-2 col-sm-2">
-                <div class="grid-line"></div>
-              </div>
-              <div class="col-md-2 col-sm-2">
-                <div class="grid-line"></div>
-              </div>
-
-            </div>
-         </div>
-    </section>
-
-
-    <div class="menu-bg"></div>
-    <div class="menu-burger">☰</div>
-
-
-    <div class="menu-items">
-       <div class="container">
-         <div class="row">
-           <div class="col-md-offset-8 col-md-4 col-sm-6">
-            <a class="w3-button w3-white w3-round"href="{{ url_for('login_page') }}">Login</a>
-             <ul class="menu">
-                
-            </ul>
-           </div>
-
-           <div class="col-md-2 col-sm-3">
-            <a class="w3-button w3-white w3-round"href="{{ url_for('login_page') }}">Login</a>
-           </div> 
-
-           <div class="col-md-12 col-sm-12">
-             <ul class="social-icon">
-              <li class="line"></li>
-               
-             </ul>
-           </div>
-         </div>
-       </div>
-    </div>
- 
-
-    
-    <div class="menu-items"> 
-        <ul class="countdown">
-                      {% if not current_user.is_authenticated %}
-                           <span class="Login">
-                                <a class="w3-button w3-indigo w3-round" href="{{ url_for('login_page') }}">Login</a>
-                           </span>
-                      
-                      {% else %}
-                      
-                           <span class="Login">
-                                <a class="w3-button w3-indigo w3-round" href="{{ url_for('home_page') }}">Log Out</a>
-                           </span>
-                           <span class="Login">
-                               <a class="w3-button w3-indigo w3-round" href="{{ url_for('my_profile_page') }}">Profile</a>
-                          </span>
-                           {% endif %}
-                      
-                 </ul>
-    </div>
--->
     
      <!-- HOME -->
      <section id="home">
@@ -183,6 +109,12 @@ https://templatemo.com/tm-521-get-ready
                 <label for="url" class="control-label col-sm-10" style="font-size: larger;">URL</label>
                 <div class="col-sm-10">
                   <input required="required" class="form-control" type="url" placeholder="https://showmerelatedwork-gr8.herokuapp.com/"  value="{{url}}" name="url" maxlength="250">
+                  <br>
+                </div>
+
+                <label for="title" class="control-label col-sm-10" style="font-size: larger;">Title</label>
+                <div class="col-sm-10">
+                  <input required="required" class="form-control" type="text" placeholder="Title"  value="{{title}}" name="title" maxlength="250">
                   <br>
                 </div>
               </div>

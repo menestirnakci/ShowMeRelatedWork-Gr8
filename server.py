@@ -9,6 +9,8 @@ from passlib.hash import pbkdf2_sha256 as hasher
 import forms
 import webbrowser
 import UrlSearch
+import Keysearch
+import random
 
 lm = LoginManager()
 
@@ -25,27 +27,72 @@ def home_page():
      logout_user()
      return redirect(url_for("dashboard_page"))
 
+url_global = ' '
+keyword_global = ' '
+
 @app.route("/dashboard",methods=['GET', 'POST'])
 def dashboard_page():
+    global url_global
+    global keyword_global
+    obje = forms.ShowMe()
+    ### Random paper alınacak
+    recommended_array = [
+    "https://www.researchgate.net/publication/229643636_Intellectual_capital_The_new_wealth_of_organizations",
+    "https://www.researchgate.net/publication/344780752_Intellectual_capital_and_corporate_value_of_listed_firms_in_Nigeria_moderating_role_of_board_diversity",
+    "https://www.researchgate.net/publication/346806538_Determining_The_Strategic_Prospects_Of_An_Enterprise_By_Assessing_The_Dynamics_Of_Its_Intellectual_Rent" ]
+    random.shuffle(recommended_array)
+    recommended = recommended_array[0]
     if request.method == 'POST':
-        url = request.form["url"]
-        
-        return graph_page(url)
+        processURL = request.form.get('url')
+        processRecommended = request.form.get('recommended')
+        processKeyword = request.form.get('keyword')
+        if processURL:
+            url = request.form["url"]
+            url_global = url
+            try:
+                myob = UrlSearch.UrlSearch(url)
+                myob.get_your_paper()
+                myob.get_all_citas()
+                myob.get_all_ref()
+            except:
+                flash('Warning!')
+                flash('Please check your URL!')
+                return render_template("dashboard.html",cursor="URL")
+            return redirect(url_for('graph_page'))
+        elif processRecommended:
+            url_global = recommended
+            return redirect(url_for('graph_page'))
+        elif processKeyword:
+            keyword = request.form["keyword"]
+            keyword_global = keyword
+            myob2 = Keysearch.KeySearch(keyword_global)
+            myob2.fill_results()
+            if len(myob2.search_results) == 0:
+                flash('Warning!')
+                flash('Please check your KeyWord!')
+                return render_template("dashboard.html",cursor="KEYWORD")
+            return redirect(url_for('results_page'))
     return render_template("dashboard.html")
 
-@app.route("/graph")
-def graph_page(url):
-    try:
-        myob = UrlSearch.UrlSearch(url)
-        myob.get_your_paper()
-        myob.get_all_citas()
-        myob.get_all_ref()
-    except:
-        flash('Warning!')
-        flash('Please check your URL!')
-        flash('Please check your URL!')
-        return render_template("dashboard.html")
+@app.route("/results",methods=['GET', 'POST'])
+def results_page():
+    global url_global
+    keyword = keyword_global
+    myob2 = Keysearch.KeySearch(keyword)
+    myob2.fill_results()
+    results = myob2.search_results
+    if request.method == "POST":
+        processURL = request.form.get('graph')
+        if processURL:
+            url_global = processURL
+            return redirect(url_for('graph_page'))
+    return render_template("results.html",cursor=results)
 
+@app.route("/graph",methods=['GET', 'POST'])
+def graph_page():
+    url = url_global
+    obje = forms.ShowMe()
+    
     myob = UrlSearch.UrlSearch(url)
     myob.get_all_citas()
     lengt=len(myob.list_of_citas)
@@ -61,10 +108,32 @@ def graph_page(url):
                     j=j-1
             j=j+1
         i=i+1
-    cursor=[]
+    cursor=[]  #citations
+    cursor2=[] #your article
+    cursor3=[] #references
     for i in range(lengt):
         cursor.append(myob.all_citas[i])
-    return render_template("graph.html",cursor=cursor)
+    for i in range(len(cursor2)):
+        cursor2.append(myob.your_article)
+    for i in range(len(cursor3)):
+        cursor3.append(myob.all_references)  
+    
+    if current_user.is_authenticated:
+        processAdd = request.form.get('add')
+        processDelete = request.form.get('delete')
+        if processAdd:
+            url_add = str(request.form["add"])
+            url_add = url_add.split("SPLITSPLIT")
+            obje.Bookmark_add(current_user.username, url_add[0],url_add[1])
+            return redirect(url_for('graph_page'))
+        elif processDelete:
+            url_delete = str(request.form["delete"])
+            obje.Bookmark_delete_graph(current_user.username,url_delete)
+            return redirect(url_for('graph_page')) 
+        cursorBookmarks = obje.Bookmarks(current_user.username)
+        return render_template("graph.html",cursor=cursor, cursor2=cursor2, cursor3=cursor3, cursorBookmarks=cursorBookmarks)
+    return render_template("graph.html",cursor=cursor, cursor2=cursor2, cursor3=cursor3)       
+app.add_url_rule("/graph/<url>", view_func=graph_page,methods=['GET','POST']) 
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
@@ -241,11 +310,16 @@ app.add_url_rule("/profile/followed_users/<user_key>", view_func=followed_users_
 @app.route('/profile/bookmarks',methods=['GET','POST'])
 @login_required
 def bookmarks_page(user_key):
+    global url_global
     obje = forms.ShowMe()
     if request.method == "POST":
         process = request.form.get('buttonName')
+        processURL = request.form.get('graph')
         if (process == "add"):
             return redirect(url_for("bookmark_adding_page"))
+        elif processURL:
+            url_global = processURL
+            return redirect(url_for('graph_page'))
         elif(process == "delete"):
             form_bookmark_keys = request.form.getlist("bookmark_keys")
             for form_bookmark_key in form_bookmark_keys:
@@ -253,7 +327,7 @@ def bookmarks_page(user_key):
             cursor = obje.Bookmarks(current_user.username)
             return render_template('bookmarks.html',cursor=cursor, username=current_user.username, currentuser=current_user.username)
     cursor = obje.Bookmarks(user_key)
-    return render_template('bookmarks.html',cursor=cursor, username=user_key, currentuser=current_user.username)
+    return render_template('bookmarks.html',cursor=cursor, username=user_key, currentuser=current_user.username, url_global=url_global)
 app.add_url_rule("/profile/bookmarks/<user_key>", view_func=bookmarks_page)
 
 @app.route('/profile/bookmarks/add',methods=['GET','POST'])
@@ -263,8 +337,9 @@ def bookmark_adding_page():
         return render_template('add_bookmark.html')
     elif request.method == 'POST':
         url = str(request.form["url"])
+        title = str(request.form["title"])
         obje = forms.ShowMe()
-        obje.Bookmark_add(current_user.username,url)
+        obje.Bookmark_add(current_user.username,url,title)
         flash("You have added.")
         return redirect(url_for('bookmarks_page', user_key=current_user.username ))
     return render_template('add_bookmark.html')

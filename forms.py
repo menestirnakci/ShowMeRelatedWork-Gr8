@@ -70,16 +70,16 @@ Select Name, Surname, Username,Gender, followed.id, followed.source, followed.ta
 				statement = """Delete from followed where source=%s and target=%s;"""
 				cursor.execute(statement,([source,target]))
 	
-	def Bookmark_add(self, username, url_bookmark):
+	def Bookmark_add(self, username, url_bookmark,title):
 		with dbapi.connect(url) as connection:
 			with connection.cursor() as cursor:
-				statement = """INSERT INTO Bookmarks(username,url) VALUES(%s,%s);"""
-				cursor.execute(statement,([username,url_bookmark]))
+				statement = """INSERT INTO Bookmarks(username,url,title) VALUES(%s,%s,%s);"""
+				cursor.execute(statement,([username,url_bookmark,title]))
 	
 	def Bookmarks(self,username):
 		with dbapi.connect(url) as connection:
 			with connection.cursor() as cursor:
-				statement = """Select id, url From bookmarks where username=%s;"""
+				statement = """Select id, url, title From bookmarks where username=%s;"""
 				cursor.execute(statement,([username]))
 				cursor_list=cursor.fetchall()
 				return cursor_list
@@ -149,3 +149,9 @@ Select Name, Surname, Username,Gender, followed.id, followed.source, followed.ta
 				cursor.execute(statement,([username]))
 				cursor_list=cursor.fetchall()
 				return cursor_list
+	
+	def Bookmark_delete_graph(self,username,url_delete):
+		with dbapi.connect(url) as connection:
+			with connection.cursor() as cursor:
+				statement = """Delete from bookmarks where username=%s and url=%s;"""
+				cursor.execute(statement,([username,url_delete]))

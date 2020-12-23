@@ -138,7 +138,7 @@
                 settings.dragObject.dragging = false;
                 settings.dragObject.itemId = null;
                 settings.dragObject.type = null;
-                refreshConnectors();
+                //refreshConnectors();
             }
         };
         var addSvgMarkers = function () {
@@ -236,7 +236,7 @@
         }
         var changeGraph = function () {
             refreshItems();
-            refreshConnectors();
+            //refreshConnectors();
             change();
             settings.onGraphChange();
         }
@@ -245,22 +245,7 @@
             element = $(element);
             addSvgMarkers();
             element
-                .mousemove(function (e) {
-                    var $of = $(this).offset();
-                    settings.mouseObject = {
-                        x: e.pageX - $of.left,
-                        y: e.pageY - $of.top
-                    };
-                    if (settings.dragObject.dragging) {
-                        if (settings.dragObject.type === 'D')
-                            dragToMouseLocation();
-                        refreshConnectors();
-                    }
-                    if (settings.dragObject.dragging) {
-                        $('.arg-Graph_delete-item').hide();
-                        $('.arg-Graph_connector-handler').hide();
-                    }
-                })
+                
                 .mouseup(function (e) {
                     e.stopPropagation();
                     e.preventDefault();
@@ -337,9 +322,14 @@
             var newNodes = JSON.parse(json);
             $.fn.ArgGraph.import(newNodes);
         }
-    $.fn.ArgGraph.refresh = function() {
-        init();
-    }
+
+    var previous = 0;
+    $.fn.ArgGraph.refresh = window.setInterval(function() {
+        if(previous != window.innerWidth){
+            previous = window.innerWidth;
+            init();
+        }
+    },50)
         init();
         return $.fn.ArgGraph;
     };

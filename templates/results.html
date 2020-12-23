@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+     <title>Dashboard</title>
+<!-- 
+
+Get Ready Template
+
+https://templatemo.com/tm-521-get-ready
+
+-->
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+     <meta name="description" content="">
+     <meta name="keywords" content="">
+     <meta name="team" content="">
+     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+     <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+     <link rel="stylesheet" href="{{url_for('static',filename='css/vegas.min.css')}}">
+     <link rel="stylesheet" href="{{url_for('static',filename='css/font-awesome.min.css')}}">
+     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+     
+
+
+     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+    <link href="http://cdn.phpoll.com/css/animate.css" rel="stylesheet">
+     
+
+     <!-- MAIN CSS -->
+     <link rel="stylesheet" href="{{url_for('static',filename='css/templatemo-style.css')}}">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="{{url_for('static',filename='css/table.css')}}">
+     
+    <style>
+     
+     .alert {
+       padding: 20px;
+       background-color: #f44336;
+       color: white;
+       opacity: 1;
+       transition: opacity 0.6s;
+       margin-bottom: 15px;
+     }
+     
+     .alert.success {background-color: #4CAF50;}
+     .alert.info {background-color: #2196F3;}
+     .alert.warning {background-color: #ff9800;}
+     
+     .closebtn {
+       margin-left: 15px;
+       color: white;
+       font-weight: bold;
+       float: right;
+       font-size: 22px;
+       line-height: 20px;
+       cursor: pointer;
+       transition: 0.3s;
+     }
+     
+     .closebtn:hover {
+       color: black;
+     }
+
+     
+     </style>
+
+</head>
+
+<body>    
+     
+     <!-- PRE LOADER -->
+     <section class="preloader">
+          <div class="spinner">
+
+               <span class="spinner-rotate"></span>
+               
+          </div>
+     </section>
+
+     
+
+
+     <!-- <GRID LINE -->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+      <div class="navbar-header">
+      
+      </button>
+      <div class="countdown" >
+        <a class="navbar-brand" style="position: absolute; top: 0; position: absolute; left: 10px;" href="{{ url_for('dashboard_page') }}" >Show Me Related Work</a>
+        {% if not current_user.is_authenticated %}
+                          <span class="Login" style="font-size: larger;">
+                               
+                               <a style="position: absolute; top: 5px; position: absolute; right: 5px;" class="w3-button w3-indigo w3-round" href="{{ url_for('login_page') }}">Login</a>
+                          </span>
+                     
+                     {% else %}
+                     
+                          <span class="Login" style="font-size: larger;">
+                            
+                               <a style="position: absolute; top: 5px; position: absolute; right: 5px;"class="w3-button w3-indigo w3-round" href="{{ url_for('home_page') }}">Log Out</a>
+                          </span>
+                          
+                          <span class="Login" style="font-size: larger;">
+                            <a style="position: absolute; top: 5px; position: absolute; right: 103px;" class="w3-button w3-indigo w3-round" href="{{ url_for('my_profile_page') }}">Profile</a>
+                       </span>
+                          
+                          {% endif %}
+      </div>
+    </div>
+    </div>
+  </nav>
+
+     <section id="home" style="display: inline;">
+          
+        <div class="overlay"></div>
+          <div class="container">
+               <div class="row">
+                    
+
+                    <div class="col-md-12 col-sm-12">
+                         
+                         <div class="home-info">
+                            <br><br><h1 style="color: wheat;">KEYWORD SEARCH RESULTS</h1><br>
+                              
+                            <table class="container" style="width: 75%; text-align: center;">
+                                <thead>
+                                    
+                                    
+                                </thead>
+                                <tbody>
+                                    <form method="POST">
+                                    {% for row in cursor %}
+                                        {%if loop.index < 15 %}
+                                            <tr>
+                                                <td>
+                                                    <button 
+                                                    style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                                                     background-color: Transparent;
+                                                    background-repeat:no-repeat;
+                                                    border: none;
+                                                    cursor:pointer;
+                                                    overflow: hidden;
+                                                    outline:none;"
+                                                        type="submit" href="" name="graph" value="https://www.researchgate.net/{{cursor[loop.index-1]['link']}}">
+                                                
+                                                    {{cursor[loop.index-1]['title']}}</button>
+                                            
+                                                </td>
+                                            
+                                            </tr>
+                                        {% endif %} 
+                                    {% endfor %} 
+                                    
+                                    </form>
+                                    
+
+                                </tbody>
+                            </table>
+
+
+
+                         </div>
+                    </div>
+               </div>
+          </div>
+     </section>
+
+
+
+     <!-- SCRIPTS -->
+
+     <script src="{{url_for('static',filename='js/jquery.js')}}"></script>
+     <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+     <script src="{{url_for('static',filename='js/vegas.min.js')}}"></script>
+     <script src="{{url_for('static',filename='js/countdown.js')}}"></script>
+     <script src="{{url_for('static',filename='js/init.js')}}"></script>
+     <script src="{{url_for('static',filename='js/custom.js')}}"></script>
+
+</body>
+</html>
