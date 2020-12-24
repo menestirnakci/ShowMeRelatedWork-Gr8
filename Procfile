@@ -1,2 +1,2 @@
-web: gunicorn -w 4 --backlog 10240 server:app
+web: gunicorn -w 3 server:app
 release: python dbinit.py
