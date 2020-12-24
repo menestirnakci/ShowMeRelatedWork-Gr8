@@ -16,6 +16,3 @@ pytz==2020.4
 requests==2.25.0
 Werkzeug==1.0.1
 WTForms==2.3.3
-waitress
-
-
