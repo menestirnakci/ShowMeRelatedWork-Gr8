@@ -33,7 +33,8 @@ class UrlSearch(object):
             self.url = url
         
         self.request_page = requests.get(self.url)
-        
+        if self.request_page.status_code != 200:
+            raise InvalidUrlError('Invalid Url')
         self.request_page_text = self.request_page.text
     def get_cita_inds(self):
         if self.request_page == None:
