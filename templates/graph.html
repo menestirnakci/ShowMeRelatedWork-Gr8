@@ -1,3 +1,4 @@
+
 <html>
 
     <meta charset="UTF-8">
@@ -148,7 +149,9 @@
     </style>
 </head>
 <body>
-
+    {% set number_of_cit = namespace(value=0) %}
+    {% set number_of_ref = namespace(value=0) %}
+    
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container-fluid">
         <div class="navbar-header">
@@ -184,7 +187,9 @@
         
         <div id="capture"> 
         <div class="arg-Graph panel" id="arg-Graph">
-             <div id="item1" class="arg-Graph_item" style="top: 300px; background:rgb(18, 119, 18)" data-neighbors="{% for row in cursor %}item{{loop.index+1}}{%if loop.index < cursor|length %},{% endif %}{% endfor %}">
+             <div id="item1" class="arg-Graph_item" style="top: 300px; background:rgb(18, 119, 18)" 
+             data-neighbors="{% for row in cursor %}item{{loop.index+1}}{%if loop.index < cursor|length %},{% endif %}{% endfor %}"
+             onclick="document.getElementById('iiitem1').style.display='block'">
                 Your Article
                 <span  class="arg-Graph_connector-handler"></span>
                 <span  class="arg-Graph_delete-item"></span>
@@ -192,12 +197,16 @@
                  {% for row in cursor %}
                  {%if loop.index < 15 %}
                  {%if cursor|length>=0 and cursor|length<=3 %}
+                 {% set number_of_cit.value = number_of_cit.value + 1%}
                  <div id="item{{loop.index+1}}" class="arg-Graph_item" style="left: 10px; top: {{(loop.index-1)*47+250}}px;" onclick="document.getElementById('iiitem{{loop.index+1}}').style.display='block'">
                  {%elif cursor|length>=3 and cursor|length<=7 %}
+                 {% set number_of_cit.value = number_of_cit.value + 1%}
                  <div id="item{{loop.index+1}}" class="arg-Graph_item" style="left: 10px; top: {{(loop.index-1)*47+150}}px;" onclick="document.getElementById('iiitem{{loop.index+1}}').style.display='block'">
                 {%elif cursor|length>=7 and cursor|length<=11 %}
+                {% set number_of_cit.value = number_of_cit.value + 1%}
                  <div id="item{{loop.index+1}}" class="arg-Graph_item" style="left: 10px; top: {{(loop.index-1)*47+100}}px;" onclick="document.getElementById('iiitem{{loop.index+1}}').style.display='block'">
                 {%else %}
+                {% set number_of_cit.value = number_of_cit.value + 1%}
                  <div id="item{{loop.index+1}}" class="arg-Graph_item" style="left: 10px; top: {{(loop.index-1)*47+50}}px;" onclick="document.getElementById('iiitem{{loop.index+1}}').style.display='block'">
 
                 {% endif %} 
@@ -213,12 +222,79 @@
                 {% endif %} 
                 {% endfor %} 
 
+                {% for row in references %}
+                 {%if loop.index < 15 %}
+                 {%if references|length>=0 and references|length<=3 %}
+                 {% set number_of_ref.value = number_of_ref.value + 1%}
+                 <div id="reitem{{loop.index+1}}" class="arg-Graph_item" style="left: 10px; top: {{(loop.index-1)*47+250}}px; background:rgb(130, 153, 28)" onclick="document.getElementById('reiiitem{{loop.index+1}}').style.display='block'" data-neighbors="item1"> 
+                 {%elif references|length>=3 and references|length<=7 %}
+                 {% set number_of_ref.value = number_of_ref.value + 1%}
+                 <div id="reitem{{loop.index+1}}" class="arg-Graph_item" style="left: 10px; top: {{(loop.index-1)*47+150}}px; background:rgb(130, 153, 28)" onclick="document.getElementById('reiiitem{{loop.index+1}}').style.display='block'" data-neighbors="item1">
+                {%elif references|length>=7 and references|length<=11 %}
+                {% set number_of_ref.value = number_of_ref.value + 1%}
+                 <div id="reitem{{loop.index+1}}" class="arg-Graph_item" style="left: 10px; top: {{(loop.index-1)*47+100}}px; background:rgb(130, 153, 28)" onclick="document.getElementById('reiiitem{{loop.index+1}}').style.display='block'" data-neighbors="item1">
+                {%else %}
+                {% set number_of_ref.value = number_of_ref.value + 1%}
+                 <div id="reitem{{loop.index+1}}" class="arg-Graph_item" style="left: 10px; top: {{(loop.index-1)*47+50}}px; background:rgb(130, 153, 28)" onclick="document.getElementById('reiiitem{{loop.index+1}}').style.display='block'" data-neighbors="item1">
+
+                {% endif %} 
+
+                {{row['title'][0:7]}}
+                    <!-- <span id="some-element" style="left: {{loop.index*78}}px; top: 460px;">
+                    {{row['title']}}
+                  </span> -->
+
+                <span class="arg-Graph_connector-handler"></span>
+                <span class="arg-Graph_delete-item"></span>
+                </div>
+                {% endif %}
+                {% endfor %} 
 
     </div>
     
 
        <!-- Trigger/Open The Modal -->
 
+       <div id="iiitem1" class="w3-modal">
+        
+        <div class="modal-content">
+		    <span onclick="document.getElementById('iiitem1').style.display='none'" class="w3-button w3-display-topright">X</span>
+		        <h3>TITLE</h3>
+                <p>{{your_paper['title']}}</p>
+                <h3>Paper Link</h3>
+                <a href="{{your_paper_link}}" target="_blank">Click here to go to paper page!</a><br>
+
+                <h3>Download Paper (If link is available)</h3>
+                {% if your_paper['download_link'] != 'No downloadable Content' %}
+                <a href="{{url_for('static',filename='pdf/your_paper.pdf')}}" target="_blank" >Click to download the paper!</a><br>
+                {% else %}
+                <b> PLEASE GO TO PAPER LINK TO REQUEST THE PAPER PDF</b>
+                {% endif %}
+
+                <form method="POST">
+                {% if current_user.is_authenticated %}
+                    {% set ns = namespace(found=false) %} 
+                    {% for row2 in cursorBookmarks %}
+                        {% if row2[1] == your_paper['link']|string %}
+                            {% set ns.found = true %}
+                        {% endif %}
+                    {% endfor %} 
+                    
+                      {% if ns.found %}
+                      <button type="submit" class="w3-button w3-teal w3-round" value="{{your_paper_link}}" name="delete">
+                        <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
+                        Delete This Paper From Bookmark </strong></button>
+                      {%else%}
+                      <button type="submit" class="w3-button w3-teal w3-round" value="{{your_paper_link}}SPLITSPLIT{{your_paper['title']}}" name="add">
+                        <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
+                        Add This Paper To Bookmark  </strong></button>
+                        {% endif %}
+                        
+                {% endif %}
+                </form>
+		  </div>
+
+       </div>
        
 		<!-- The Modal -->
         {% for row in cursor %}
@@ -230,20 +306,46 @@
 		  <div class="modal-content">
               
 		    <span onclick="document.getElementById('item1item{{loop.index+1}}').style.display='none'" class="w3-button w3-display-topright">X</span>
-                <h3>Citation Text</h3>
-                <p>{{row['citation_text']|safe}}</p>
+                <h3>Citation Text (If available)</h3>
+                {% for row2 in row['citation_text'] %}
+
+                <p>{{row2|safe}}</p><br>
+                {% endfor %} 
                 
-                
-                <button onclick="stronger('iitem{{loop.index+1}}')" class="w3-button w3-teal w3-round">
+                <button onclick="stronger('i0item{{loop.index+1}}')" class="w3-button w3-teal w3-round">
                     <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
                         Make Edge Strong</strong></button>
-                <button onclick="weaker('iitem{{loop.index+1}}')" class="w3-button w3-teal w3-round">
+                <button onclick="weaker('i0item{{loop.index+1}}')" class="w3-button w3-teal w3-round">
                     <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
                         Make Edge Weak</strong></button>
 		  </div>
           
 
 		</div>
+                
+                {% endif %} 
+                {% endfor %}
+
+        {% for row in references %}
+        {%if loop.index < 15 %}
+
+        <div id="reitem{{loop.index+1}}item1" class="w3-modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                
+            <span onclick="document.getElementById('reitem{{loop.index+1}}item1').style.display='none'" class="w3-button w3-display-topright">X</span>
+                
+                <button onclick="stronger('i{{number_of_cit.value+loop.index}}item1')" class="w3-button w3-teal w3-round">
+                    <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
+                        Make Edge Strong</strong></button>
+                <button onclick="weaker('i{{number_of_cit.value+loop.index}}item1')" class="w3-button w3-teal w3-round">
+                    <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
+                        Make Edge Weak</strong></button>
+            </div>
+            
+
+        </div>
                 
                 {% endif %} 
                 {% endfor %} 
@@ -261,26 +363,32 @@
 		    <h3>TITLE</h3>
                 <p>{{row['title']}}</p>
                 <h3>Paper Link</h3>
-                <a href="https://www.researchgate.net/{{row['link']}}" target="_blank">Click here to go to paper page!</a><br>
-                <h3>Download Paper (If link is available)</h3>
-
+                <a href="{{row['link']}}" target="_blank">Click here to go to paper page!</a><br>
                 <form method="POST">
+                <h3>Download Paper (If link is available)</h3>
+                {% if row['link'] == processDownloadCit %}
+                <a href="{{url_for('static',filename='pdf/cit_paper.pdf')}}" target="_blank" >Click to download the paper!</a><br>
+                {% else %}
+                <button type="submit" class="w3-button w3-red w3-round" value="{{row['link']}}" name="download_cit">
+                    <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
+                    Show The Download Link </strong></button>
+                   <br> 
+                {% endif %}
+                
                 {% if current_user.is_authenticated %}
                     {% set ns = namespace(found=false) %} 
                     {% for row2 in cursorBookmarks %}
-                        {% set my_string = 'https://www.researchgate.net/' + row['link']|string %}
-                        
-                        {% if row2[1] == my_string %}
+                        {% if row2[1] == row['link']|string %}
                             {% set ns.found = true %}
                         {% endif %}
                     {% endfor %} 
                     
                       {% if ns.found %}
-                      <button type="submit" class="w3-button w3-teal w3-round" value="https://www.researchgate.net/{{row['link']}}" name="delete">
+                      <button type="submit" class="w3-button w3-teal w3-round" value="{{row['link']}}" name="delete">
                         <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
                         Delete This Paper From Bookmark </strong></button>
                       {%else%}
-                      <button type="submit" class="w3-button w3-teal w3-round" value="https://www.researchgate.net/{{row['link']}}SPLITSPLIT{{row['title']}}" name="add">
+                      <button type="submit" class="w3-button w3-teal w3-round" value="{{row['link']}}SPLITSPLIT{{row['title']}}" name="add">
                         <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
                         Add This Paper To Bookmark  </strong></button>
                         {% endif %}
@@ -295,12 +403,101 @@
                 
                 {% endif %} 
                 {% endfor %} 
-	
+
+
+        {% for row in references %}
+        {%if loop.index < 15 %}
+
+        <div id="reiiitem{{loop.index+1}}" class="w3-modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                
+            <span onclick="document.getElementById('reiiitem{{loop.index+1}}').style.display='none'" class="w3-button w3-display-topright">X</span>
+            <h3>TITLE</h3>
+                <p>{{row['title']}}</p>
+                <h3>Paper Link</h3>
+                <a href="{{row['link']}}" target="_blank">Click here to go to paper page!</a><br>
+                <h3>Download Paper (If link is available)</h3>
+                <form method="POST">
+                {% if row['link'] == processDownloadRef %}
+                <a href="{{url_for('static',filename='pdf/ref_paper.pdf')}}" target="_blank" >Click to download the paper!</a><br>
+                {% else %}
+                <button type="submit" class="w3-button w3-red w3-round" value="{{row['link']}}" name="download_ref">
+                    <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
+                    Show The Download Link </strong></button>
+                   <br> 
+                {% endif %}
+
+                
+                {% if current_user.is_authenticated %}
+                    {% set ns = namespace(found=false) %} 
+                    {% for row2 in cursorBookmarks %}
+                        {% if row2[1] == row['link']|string %}
+                            {% set ns.found = true %}
+                        {% endif %}
+                    {% endfor %} 
+                    
+                        {% if ns.found %}
+                        <button type="submit" class="w3-button w3-teal w3-round" value="{{row['link']}}" name="delete">
+                        <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
+                        Delete This Paper From Bookmark </strong></button>
+                        {%else%}
+                        <button type="submit" class="w3-button w3-teal w3-round" value="{{row['link']}}SPLITSPLIT{{row['title']}}" name="add">
+                        <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
+                        Add This Paper To Bookmark  </strong></button>
+                        {% endif %}
+
+                {% endif %}
+                </form>
+                
+            </div>
+            
+
+        </div>
+                
+                {% endif %} 
+                {% endfor %} 
+
+
+
+	<!----   ---------------------------------------------------------------->
+
+    <div id="howtowork1" class="w3-modal">
+
+          <!-- Modal content -->
+          <div class="modal-content">
+              
+            <span onclick="document.getElementById('howtowork1').style.display='none'" class="w3-button w3-display-topright">X</span>
+                <h3>How to Work ?</h3>
+
+                <img src="{{url_for('static',filename='images/htw.png')}}" >  
+                <br>
+                <b>
+                <ul>
+              <li>  <h7> Black arrow means "strong relationship" </h7> <br> </li> 
+              <li>  <h7> Red arrow means "weak relationship" </h7>  <br> </li>
+               
+              <li>   <h7> Click on the citation edges, shows citation text and relationship buttons.</h7><br> </li>
+              <li> <h7> Click on the references edges, shows only relationship buttons.</h7><br> </li>
+              <li>  <h7> Click on the nodes, shows title, paper link, download link (if available).</h7><br> </li>
+                </ul>   
+                </b> 
+            
+          </div>
+          
+
+        </div>
+
+    <!----   ---------------------------------------------------------------->
+
                 <div id="buttons" style="height: 1000px;">
-                <a id="savebutton" class="w3-button w3-green w3-round" onclick="takeshot()">Generate Screenshot</a> 
+                <a id="howtowork" class="w3-button w3-lime w3-round" onclick="document.getElementById('howtowork1').style.display='block'">How To Work</a> 
                 <a class="w3-button w3-purple w3-round" onclick="scrollDown()">&#8659; Click To See Download Options &#8659;</a>
                 
                 <div id="downloads" style="display: none;">
+                <br><br>
+                <a id="savebutton" class="w3-button w3-green w3-round" onclick="takeshot()">Generate Screenshot</a> 
                 <br><br>
                 <a id="jsonCitations" class="w3-button w3-red w3-round">Download Citations(JSON)</a> 
                 <a id="csvCitations" class="w3-button w3-teal w3-round">Download Citations(CSV)</a>  
@@ -322,6 +519,7 @@
                             <th>Title</th>
                             <th>Citation Text</th>
                             <th>Link</th>
+                            <th>Full Text Available</th>
                         </tr>
                     </thead>
                     {% for row in cursor %}
@@ -329,11 +527,49 @@
                         <tr> 
                             <td>{{row['title']}}</td>
                             <td>{{row['citation_text']}}</td>
-                            <td>https://www.researchgate.net/{{row['link']}}</td>
+                            <td>{{row['link']}}</td>
+                            <td>{{row['full_text']}}</td>
                         </tr>
                     </tbody>
                     {% endfor %}  
 
+                </table>
+
+                <table id="table2" style="background-color: wheat; display: none;"> 
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Link</th>
+                            <th>Full Text Available</th>
+                        </tr>
+                    </thead>
+                    {% for row in references %}
+                    <tbody>
+                        <tr> 
+                            <td>{{row['title']}}</td>
+                            <td>{{row['link']}}</td>
+                            <td>{{row['full_text']}}</td>
+                        </tr>
+                    </tbody>
+                    {% endfor %}  
+
+                </table>
+
+                <table id="table3" style="background-color: wheat; display: none;"> 
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Link</th>
+                            <th>Download Link</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr> 
+                            <td>{{your_paper['title']}}</td>
+                            <td>{{your_paper_link}}</td>
+                            <td>{{your_paper['download_link']}}</td>
+                        </tr>
+                    </tbody>
                 </table>
 
         </div>
@@ -381,16 +617,21 @@
                 var d = document.getElementById("item1");
                 d.style.left = window.innerWidth *0.4 ;
                 var i;
-                for (i = 2; i < 16; i++) {
-                    var itemName = "item" + i;
-                    var pathName = "iitem" + i;
-                    document.getElementById(itemName).style.left = document.documentElement.clientWidth / 10;
-                    
+                for (i = 2; i < {{number_of_cit.value}}+2; i++) {
+                    var itemNameCit = "item" + i;
+                    //var itemNameRef = "reitem" + i
+                    //var pathName = "iitem" + i;
+                    document.getElementById(itemNameCit).style.left = document.documentElement.clientWidth / 10;
+                    //document.getElementById(itemNameRef).style.left = document.documentElement.clientWidth * 0.7;
+                }
+                for (i = 2; i < {{number_of_ref.value}}+2; i++) {
+                    var itemNameRef = "reitem" + i
+                    document.getElementById(itemNameRef).style.left = document.documentElement.clientWidth * 0.7;
                 }
             }
             previous = document.documentElement.clientWidth;
             
-        },50)
+        },1)
 
         
         function takeshot() { 
@@ -448,17 +689,18 @@
         })
         
         function scrollDown(){
-            $("html, body").animate({ scrollTop: 500 }, 500);
-            document.getElementById('downloads').style.display="inline";
-            
+            if(document.getElementById('downloads').style.display == "inline"){
+                document.getElementById('downloads').style.display="none";
+                $("html, body").animate({ scrollTop: -500 }, 500);
+            }
+            else{
+                $("html, body").animate({ scrollTop: 500 }, 500);
+                document.getElementById('downloads').style.display="inline";
+            }
         }
-
-        function fade(){
-            $("#scroll").fadeToggle();
-        }
-        setInterval(fade, 50);
 
         </script>
+        
         
      
 </body>

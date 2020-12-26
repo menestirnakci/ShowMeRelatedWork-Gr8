@@ -93,22 +93,22 @@ Select Name, Surname, Username,Gender, followed.id, followed.source, followed.ta
 	def About_key(self,username):
 		with dbapi.connect(url) as connection:
 			with connection.cursor() as cursor:
-				statement = """Select username,info from About where username=%s;"""
+				statement = """Select username,info,city,email,university,telephone from About where username=%s;"""
 				cursor.execute(statement,([username]))
 				cursor_list=cursor.fetchall()
 				return cursor_list
 
-	def About_update(self,username,info):
+	def About_update(self,username,info,city, email, uni, tel):
 		with dbapi.connect(url) as connection:
 			with connection.cursor() as cursor:
-				statement = """Update About Set info=%s where username=%s;"""
-				cursor.execute(statement,([info,username]))
+				statement = """Update About Set info=%s, city=%s, email=%s, university=%s, telephone=%s where username=%s;"""
+				cursor.execute(statement,([info,city,email,uni,tel,username]))
 
-	def About_add(self, username, info):
+	def About_add(self, username, info, city, email, uni, tel):
 		with dbapi.connect(url) as connection:
 			with connection.cursor() as cursor:
-				statement = """Insert Into About(username,info) Values(%s,%s);"""
-				cursor.execute(statement,([username,info]))
+				statement = """Insert Into About(username,info,city,email,university,telephone) Values(%s,%s,%s,%s,%s,%s);"""
+				cursor.execute(statement,([username,info,city,email,uni,tel]))
 	
 	def About_delete(self, username):
 		with dbapi.connect(url) as connection:

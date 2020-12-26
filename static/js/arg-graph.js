@@ -113,7 +113,7 @@
                                         var nextDiv = $("#" + val2)[0];
                                         var destinationPoint = getDestinationPosition(orginPoint, nextDiv);
                                         if (destinationPoint) {
-                                            var path = '<path d="' + getdStr(orginPoint, destinationPoint) +  '"id="i'+val2+'" stroke="red" onclick="document.getElementById(\''+$orginDiv.attr("id")+val2+'\').style.display=\'block\'"/>';
+                                            var path = '<path d="' + getdStr(orginPoint, destinationPoint) +  '"id="i'+index+val2+'" stroke="red" onclick="document.getElementById(\''+$orginDiv.attr("id")+val2+'\').style.display=\'block\'"/>';
                                             arrows.innerHTML += path;
                                         }
                                     }

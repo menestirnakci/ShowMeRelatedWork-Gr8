@@ -54,8 +54,8 @@ INIT_STATEMENTS = [
             (
                 ID serial,
                 username VARCHAR(10) NOT NULL,
-                url VARCHAR(250) NOT NULL,
-                title VARCHAR(250) NOT NULL,
+                url VARCHAR(1000) NOT NULL,
+                title VARCHAR(1000) NOT NULL,
                 PRIMARY KEY (ID)
             )
             """

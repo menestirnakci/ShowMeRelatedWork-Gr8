@@ -207,7 +207,7 @@ color:#889c0b;
             <table class="rwd-table" style="width:100%;  color: seashell; table-layout: fixed;">
                 <tr>
                   {% if username == currentuser %}
-                  <th style="text-align: center; font-size: 25px;";>About Me</th>
+                  <th style="text-align: left; font-size: 25px;">About Me</th>
                   {% else %}
                       <th style="text-align: center; font-size: 25px;">About {{username}}</th>
                   {% endif %}
@@ -217,8 +217,28 @@ color:#889c0b;
                   </tr>
                 {% for row in cursor %}
                 <tr>
-                    <td rowspan="0" style="overflow-wrap: break-word;"><p style="overflow-wrap: break-word; font-size: 18px;">{{row[1]}}</p></td>
-                  </tr>
+                    <td colspan="2" style="overflow-wrap: break-word;"><p style="overflow-wrap: break-word; font-size: 18px;">{{row[1]}}</p></td>
+                </tr>
+                <tr>
+                  <th style="text-align: left; font-size: 20px;">City:</th> 
+                
+                    <td style="overflow-wrap: break-word;"><p style="overflow-wrap: break-word; font-size: 18px;">{{row[2]}}</p></td>
+                </tr>
+                <tr>
+                  <th style="text-align: left; font-size: 20px;">E-mail:</th> 
+                
+                    <td style="overflow-wrap: break-word;"><p style="overflow-wrap: break-word; font-size: 18px;">{{row[3]}}</p></td>
+                </tr> 
+                <tr>
+                  <th style="text-align: left; font-size: 20px;">University:</th> 
+                
+                    <td style="overflow-wrap: break-word;"><p style="overflow-wrap: break-word; font-size: 18px;">{{row[4]}}</p></td>
+                </tr>
+                <tr>
+                  <th style="text-align: left; font-size: 20px;">Telephone:</th> 
+                
+                    <td style="overflow-wrap: break-word;"><p style="overflow-wrap: break-word; font-size: 18px;">{{row[5]}}</p></td>
+                </tr>
                    
 
                   

@@ -11,6 +11,16 @@ import webbrowser
 import UrlSearch
 import Keysearch
 import random
+import os
+import requests
+import shutil
+from pathlib import Path
+import time
+from ctypes import wintypes, WINFUNCTYPE
+import signal
+import ctypes
+import mmap
+import sys
 
 lm = LoginManager()
 
@@ -34,12 +44,20 @@ keyword_global = ' '
 def dashboard_page():
     global url_global
     global keyword_global
-    obje = forms.ShowMe()
-    ### Random paper alınacak
     recommended_array = [
     "https://www.researchgate.net/publication/229643636_Intellectual_capital_The_new_wealth_of_organizations",
-    "https://www.researchgate.net/publication/344780752_Intellectual_capital_and_corporate_value_of_listed_firms_in_Nigeria_moderating_role_of_board_diversity",
-    "https://www.researchgate.net/publication/346806538_Determining_The_Strategic_Prospects_Of_An_Enterprise_By_Assessing_The_Dynamics_Of_Its_Intellectual_Rent" ]
+    "https://www.researchgate.net/publication/309739646_Improving_Human-Robot_Interaction_Based_on_Joint_Attention",
+    "https://www.researchgate.net/publication/6312176_Sequential_processing_of_interaural_timing_differences_for_sound_source_segregation_and_spatial_localization_Evidence_from_event-related_cortical_potentials",
+    "https://www.researchgate.net/publication/330402717_Omni-script_Device_Independent_User_Interface_Development_for_Omni-channel_FinTech_Applications",
+    "https://www.researchgate.net/publication/254222714_Document_Categorization_with_Modified_Statistical_Language_Models_for_Agglutinative_Languages",
+    "https://www.researchgate.net/publication/262805964_HYBRIST_Mobility_Model-_A_Novel_Hybrid_Mobility_Model_for_VANET_Simulations",
+    "https://www.researchgate.net/publication/337435554_Using_Statistical_Measures_and_Machine_Learning_for_Graph_Reduction_to_Solve_Maximum_Weight_Clique_Problems",
+    "https://www.researchgate.net/publication/326319011_Intellectual_capital_knowledge_management_and_social_capital_within_the_ICT_sector_in_Jordan",
+    "https://www.researchgate.net/publication/6502464_Development_of_AMSTAR_a_measurement_tool_to_assess_the_methodological_quality_of_systematic_reviews",
+    "https://www.researchgate.net/publication/312941965_A_Survey_of_Inter-Vehicle_Communication",
+    "https://www.researchgate.net/publication/319327465_LocalCoin_An_Ad-hoc_Payment_Scheme_for_Areas_with_High_Connectivity",
+    "https://www.researchgate.net/publication/326606151_Privacy_Preserving_and_Cost_Optimal_Mobile_Crowdsensing_Using_Smart_Contracts_on_Blockchain",
+    "https://www.researchgate.net/publication/7525373_Contribution_of_harmonicity_and_location_to_auditory_object_formation_in_free_field_Evidence_from_event-related_brain_potentials" ]
     random.shuffle(recommended_array)
     recommended = recommended_array[0]
     if request.method == 'POST':
@@ -51,9 +69,7 @@ def dashboard_page():
             url_global = url
             try:
                 myob = UrlSearch.UrlSearch(url)
-                myob.get_your_paper()
-                myob.get_all_citas()
-                myob.get_all_ref()
+                myob.fill_blanks()
             except:
                 flash('Warning!')
                 flash('Please check your URL!')
@@ -92,32 +108,92 @@ def results_page():
 def graph_page():
     url = url_global
     obje = forms.ShowMe()
-    
+    try:
+        myob = UrlSearch.UrlSearch(url)
+        myob.fill_blanks()
+    except:
+        flash('Warning!')
+        flash('Please check your URL!')
+        return redirect(url_for('dashboard_page'))
+
     myob = UrlSearch.UrlSearch(url)
-    myob.get_all_citas()
-    lengt=len(myob.list_of_citas)
-    i=0
-    while i < lengt:
-        j=0
-        while j <lengt:
-            if myob.all_citas[i]["title"]==myob.all_citas[j]["title"] or myob.all_citas[i]["link"]==myob.all_citas[j]["link"]:
-                if i!=j and i<j:
-                    myob.all_citas[i]["citation_text"]=myob.all_citas[i]["citation_text"]+"<br><br>"+(myob.all_citas[j]["citation_text"])
-                    del myob.all_citas[j]
-                    lengt=lengt-1
-                    j=j-1
-            j=j+1
-        i=i+1
-    cursor=[]  #citations
-    cursor2=[] #your article
-    cursor3=[] #references
-    for i in range(lengt):
-        cursor.append(myob.all_citas[i])
-    for i in range(len(cursor2)):
-        cursor2.append(myob.your_article)
-    for i in range(len(cursor3)):
-        cursor3.append(myob.all_references)  
-    
+    myob.fill_blanks()
+
+    #cursor=[]  #citations
+    #for i in range(len(myob.all_citas)):
+    #    cursor.append(myob.all_citas[i])
+    if not os.path.exists('./static/pdf'):
+        os.makedirs('./static/pdf')
+    try:
+        r = requests.get(myob.your_article['download_link'])
+        try:
+            os.remove('./static/pdf/your_paper.pdf') 
+        except:
+            print('x')
+        with open('./static/pdf/your_paper.pdf', 'wb') as f:
+            f.write(r.content)
+    except:
+        try:
+            os.remove('./static/pdf/your_paper.pdf') 
+        except:
+            print('x')
+    ######################################################################
+    processDownloadCit = request.form.get('download_cit')
+    if processDownloadCit:
+        if not os.path.exists('./static/pdf'):
+                os.makedirs('./static/pdf')
+        try:
+            '''try:
+                cit = UrlSearch.UrlSearch(processDownloadCit)
+                cit.fill_blanks()
+            except:
+                flash('Warning!')
+                flash('Please check your URL!')
+                return redirect(url_for('dashboard_page'))'''
+
+            cit = UrlSearch.UrlSearch(processDownloadCit)
+            cit.fill_blanks()
+            r2 = requests.get(cit.your_article['download_link'])
+            try:
+                os.remove('./static/pdf/cit_paper.pdf') 
+            except:
+                print('x')
+            with open('./static/pdf/cit_paper.pdf', 'wb') as f:
+                f.write(r2.content)
+        except:
+            try:
+                os.remove('./static/pdf/cit_paper.pdf') 
+            except:
+                print('x')
+    ######################################################################
+    processDownloadRef = request.form.get('download_ref')
+    if processDownloadRef:
+        if not os.path.exists('./static/pdf'):
+                os.makedirs('./static/pdf')
+        try:
+            '''try:
+                ref = UrlSearch.UrlSearch(processDownloadCit)
+                ref.fill_blanks()
+            except:
+                flash('Warning!')
+                flash('Please check your URL!')
+                return redirect(url_for('dashboard_page'))'''
+
+            ref = UrlSearch.UrlSearch(processDownloadRef)
+            ref.fill_blanks()
+            r3 = requests.get(ref.your_article['download_link'])
+            try:
+                os.remove('./static/pdf/ref_paper.pdf') 
+            except:
+                print('x')
+            with open('./static/pdf/ref_paper.pdf', 'wb') as f:
+                f.write(r3.content)
+        except:
+            try:
+                os.remove('./static/pdf/ref_paper.pdf') 
+            except:
+                print('x')
+    ######################################################################    
     if current_user.is_authenticated:
         processAdd = request.form.get('add')
         processDelete = request.form.get('delete')
@@ -129,10 +205,10 @@ def graph_page():
         elif processDelete:
             url_delete = str(request.form["delete"])
             obje.Bookmark_delete_graph(current_user.username,url_delete)
-            return redirect(url_for('graph_page')) 
+            return redirect(url_for('graph_page'))
         cursorBookmarks = obje.Bookmarks(current_user.username)
-        return render_template("graph.html",cursor=cursor, cursor2=cursor2, cursor3=cursor3, cursorBookmarks=cursorBookmarks)
-    return render_template("graph.html",cursor=cursor, cursor2=cursor2, cursor3=cursor3)       
+        return render_template("graph.html",cursor=myob.all_citas, your_paper=myob.your_article, references=myob.all_references, cursorBookmarks=cursorBookmarks, your_paper_link=url,processDownloadCit=processDownloadCit,processDownloadRef=processDownloadRef)
+    return render_template("graph.html",cursor=myob.all_citas, your_paper=myob.your_article, references=myob.all_references, your_paper_link=url,processDownloadCit=processDownloadCit,processDownloadRef=processDownloadRef)       
 app.add_url_rule("/graph/<url>", view_func=graph_page,methods=['GET','POST']) 
 
 class LoginForm(FlaskForm):
@@ -236,6 +312,10 @@ def about_adding_page():
     elif request.method == 'POST':
         username = current_user.username
         info = request.form["about"]
+        city = request.form["city"]
+        email = request.form["email"]
+        uni = request.form["uni"]
+        tel = request.form["tel"]
         cursor=obje.Check_about(username)
         if cursor == False:
             flash("Warning!")
@@ -243,7 +323,7 @@ def about_adding_page():
             cursor = obje.About_key(current_user.username)
             return redirect(url_for('about_page', user_key=current_user.username ))
         else:
-            obje.About_add(username,info)
+            obje.About_add(username,info,city,email,uni,tel)
             #flash("You have updated about!")
             cursor = obje.About_key(current_user.username)
             return redirect(url_for('about_page', user_key=current_user.username ))
@@ -259,7 +339,11 @@ def about_update_page():
         return render_template('update_about.html',cursor=cursor, username=current_user.username, currentuser=current_user.username)
     elif request.method == 'POST':
         info = str(request.form["about"])
-        obje.About_update(current_user.username,info)
+        city = request.form["city"]
+        email = request.form["email"]
+        uni = request.form["uni"]
+        tel = request.form["tel"]
+        obje.About_update(current_user.username,info,city, email, uni, tel)
         #flash("You have updated about!")
         cursor = obje.About_key(current_user.username)
         return redirect(url_for('about_page', user_key=current_user.username ))
@@ -374,5 +458,31 @@ def user_key(user_key):
     return render_template("other_profiles.html",username=user_key,cursor=cursor[0][0])
 app.add_url_rule("/profile/<user_key>", view_func=user_key)
 
+
+HandlerRoutine = WINFUNCTYPE(wintypes.BOOL, wintypes.DWORD)
+
+def _ctrl_handler(sig):
+    """Handle a sig event and return 0 to terminate the process"""
+    if sig == signal.CTRL_C_EVENT:
+        dir_path = Path('./static/pdf')
+        shutil.rmtree(dir_path)
+    elif sig == signal.CTRL_BREAK_EVENT:
+        dir_path = Path('./static/pdf')
+        shutil.rmtree(dir_path)
+    else:
+        print("UNKNOWN EVENT")
+    return 0
+
+ctrl_handler = HandlerRoutine(_ctrl_handler)
+
+
+SetConsoleCtrlHandler = ctypes.windll.kernel32.SetConsoleCtrlHandler
+SetConsoleCtrlHandler.argtypes = (HandlerRoutine, wintypes.BOOL)
+SetConsoleCtrlHandler.restype = wintypes.BOOL
+
+
 if __name__ == "__main__":
+    if not SetConsoleCtrlHandler(ctrl_handler, 1):
+        print("Unable to add SetConsoleCtrlHandler")
+        exit(-1)
     app.run(debug=True)
