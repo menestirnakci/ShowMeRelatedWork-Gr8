@@ -154,4 +154,25 @@ Select Name, Surname, Username,Gender, followed.id, followed.source, followed.ta
 		with dbapi.connect(url) as connection:
 			with connection.cursor() as cursor:
 				statement = """Delete from bookmarks where username=%s and url=%s;"""
-				cursor.execute(statement,([username,url_delete]))
+				cursor.execute(statement,([username,url_delete])),
+		
+	def Users_that_follows(self, username):
+		with dbapi.connect(url) as connection:
+			with connection.cursor() as cursor:
+				statement = """ Select Name, Surname, Username, Gender, followed.id, followed.source, followed.target From followed left join users on followed.source=users.username where followed.target=%s;"""
+				cursor.execute(statement,([username]))
+				cursor_list=cursor.fetchall()
+				return cursor_list
+	
+	def Bookmark_copy(self,id,username):
+		with dbapi.connect(url) as connection:
+			with connection.cursor() as cursor:
+				statement = """select * from bookmarks where id=%s""" 
+				cursor.execute(statement,([id]))
+				for row in cursor:	
+					paper_url = row[2]
+					title = row[3]
+				with dbapi.connect(url) as connection:
+					with connection.cursor() as cursor2:
+						statement2 = """INSERT INTO Bookmarks(username,url,title) VALUES(%s,%s,%s);"""
+						cursor2.execute(statement2,([username,paper_url,title]))

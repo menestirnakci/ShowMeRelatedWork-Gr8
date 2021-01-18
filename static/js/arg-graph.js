@@ -161,7 +161,6 @@
         };
         
         var refreshItems = function () {
-            // بروز کردن آیتم ها
             items = element.find(".arg-Graph_item");
 
             items

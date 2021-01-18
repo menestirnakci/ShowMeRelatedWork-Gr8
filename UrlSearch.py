@@ -56,22 +56,34 @@ class UrlSearch(object):
             self.get_page()
         a = self.request_page_text.find('<div class="lite-tabs__tab js-target-citations lite-page-visible">')
         b = self.request_page_text.find('<div class="lite-tabs__tab js-target-references">')
-        self.page = self.request_page_text[:a]
-        self.cita_page = self.request_page_text[a:b]
-        self.ref_page = self.request_page_text[b:]
+        if a == -1:
+            b = self.request_page_text.find('<div class="lite-tabs__tab js-target-references lite-page-visible">')
+            if b == -1:
+                self.page = self.request_page_text
+            else:
+                self.page = self.request_page_text[:b]
+                self.ref_page = self.request_page_text[b:]
+        else:
+            self.page = self.request_page_text[:a]
+            self.cita_page = self.request_page_text[a:b]
+            self.ref_page = self.request_page_text[b:]
+
 
         self.title = self.find_title(self.page)
         self.download_link = ciref.download_link(self.page)
         self.your_article['title'] = self.title
         self.your_article['download_link'] = self.download_link
 
-        refers = ciref.Refs(self.ref_page)
-        citas = ciref.Citas(self.cita_page)
 
-        refers.do_work()
-        citas.do_work()
-        self.all_citas = citas.all_citas
-        self.all_references = refers.refs
+        if self.ref_page != None:
+            refers = ciref.Refs(self.ref_page)
+            refers.do_work()
+            self.all_references = refers.refs
+        if self.cita_page != None:
+            citas = ciref.Citas(self.cita_page)
+            citas.do_work()
+            self.all_citas = citas.all_citas
+        
 
     @staticmethod
     def download(url):

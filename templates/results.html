@@ -130,8 +130,13 @@ https://templatemo.com/tm-521-get-ready
                     <div class="col-md-12 col-sm-12">
                          
                          <div class="home-info">
+                         {% if cursor2 == 'keyword' %}
                             <br><br><h1 style="color: wheat;">KEYWORD SEARCH RESULTS</h1><br>
-                              
+                         {% elif cursor2 == 'author' %}   
+                              <br><br><h1 style="color: wheat;">AUTHOR SEARCH RESULTS</h1><br>
+                         {% else %}
+                              <br><br><h1 style="color: wheat;">{{author}}'s PUBLICATION RESULTS</h1><br>
+                         {% endif %}
                             <table class="container" style="width: 75%; text-align: center;">
                                 <thead>
                                     
@@ -151,7 +156,7 @@ https://templatemo.com/tm-521-get-ready
                                                     cursor:pointer;
                                                     overflow: hidden;
                                                     outline:none;"
-                                                        type="submit" href="" name="graph" value="https://www.researchgate.net/{{cursor[loop.index-1]['link']}}">
+                                                        type="submit" href="" name="graph" value="{{cursor[loop.index-1]['link']}}">
                                                 
                                                     <b>{{cursor[loop.index-1]['title']}}</b></button>
                                             
@@ -160,7 +165,6 @@ https://templatemo.com/tm-521-get-ready
                                             </tr>
                                         {% endif %} 
                                     {% endfor %} 
-                                    
                                     </form>
                                     
 

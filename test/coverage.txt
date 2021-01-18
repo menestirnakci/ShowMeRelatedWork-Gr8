@@ -1,0 +1,2 @@
+python -m coverage run --source "C:\Users\MENES\Documents\BLG411E\showmerelatedwork-gr8\test" -m  pytest -v performance.py user_information.py login.py bookmark.py acceptance.py search_author.py search_keyword.py search_paper_url.py search_recommended.py user.py user_information.py performance.py
+python -m coverage report -m

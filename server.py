@@ -11,16 +11,8 @@ import webbrowser
 import UrlSearch
 import Keysearch
 import random
-import os
-import requests
-import shutil
-from pathlib import Path
 import time
-from ctypes import wintypes, WINFUNCTYPE
-import signal
-import ctypes
-import mmap
-import sys
+import Author
 
 lm = LoginManager()
 
@@ -38,12 +30,16 @@ def home_page():
      return redirect(url_for("dashboard_page"))
 
 url_global = ' '
+url_author_global = ' '
+author_name_global = ' '
 keyword_global = ' '
+author_global = ' '
 
 @app.route("/dashboard",methods=['GET', 'POST'])
 def dashboard_page():
     global url_global
     global keyword_global
+    global author_global
     recommended_array = [
     "https://www.researchgate.net/publication/229643636_Intellectual_capital_The_new_wealth_of_organizations",
     "https://www.researchgate.net/publication/309739646_Improving_Human-Robot_Interaction_Based_on_Joint_Attention",
@@ -52,18 +48,22 @@ def dashboard_page():
     "https://www.researchgate.net/publication/254222714_Document_Categorization_with_Modified_Statistical_Language_Models_for_Agglutinative_Languages",
     "https://www.researchgate.net/publication/262805964_HYBRIST_Mobility_Model-_A_Novel_Hybrid_Mobility_Model_for_VANET_Simulations",
     "https://www.researchgate.net/publication/337435554_Using_Statistical_Measures_and_Machine_Learning_for_Graph_Reduction_to_Solve_Maximum_Weight_Clique_Problems",
+    "https://www.researchgate.net/publication/344780752_Intellectual_capital_and_corporate_value_of_listed_firms_in_Nigeria_moderating_role_of_board_diversity",
+    "https://www.researchgate.net/publication/346806538_Determining_The_Strategic_Prospects_Of_An_Enterprise_By_Assessing_The_Dynamics_Of_Its_Intellectual_Rent",
     "https://www.researchgate.net/publication/326319011_Intellectual_capital_knowledge_management_and_social_capital_within_the_ICT_sector_in_Jordan",
     "https://www.researchgate.net/publication/6502464_Development_of_AMSTAR_a_measurement_tool_to_assess_the_methodological_quality_of_systematic_reviews",
     "https://www.researchgate.net/publication/312941965_A_Survey_of_Inter-Vehicle_Communication",
     "https://www.researchgate.net/publication/319327465_LocalCoin_An_Ad-hoc_Payment_Scheme_for_Areas_with_High_Connectivity",
     "https://www.researchgate.net/publication/326606151_Privacy_Preserving_and_Cost_Optimal_Mobile_Crowdsensing_Using_Smart_Contracts_on_Blockchain",
     "https://www.researchgate.net/publication/7525373_Contribution_of_harmonicity_and_location_to_auditory_object_formation_in_free_field_Evidence_from_event-related_brain_potentials" ]
+
     random.shuffle(recommended_array)
     recommended = recommended_array[0]
     if request.method == 'POST':
         processURL = request.form.get('url')
         processRecommended = request.form.get('recommended')
         processKeyword = request.form.get('keyword')
+        processAuthor = request.form.get('author')
         if processURL:
             url = request.form["url"]
             url_global = url
@@ -88,7 +88,56 @@ def dashboard_page():
                 flash('Please check your KeyWord!')
                 return render_template("dashboard.html",cursor="KEYWORD")
             return redirect(url_for('results_page'))
+        elif processAuthor:
+            author_name = request.form['author']
+            author_global = author_name  
+            myob2 = Keysearch.KeySearch(author_global, t = 'researcher')
+            myob2.fill_results()
+            if len(myob2.search_results) == 0:
+                flash('Warning!')
+                flash('Please check your Author Name!')
+                return render_template("dashboard.html",cursor="AUTHOR")
+            return redirect(url_for('author_results_page'))
     return render_template("dashboard.html")
+
+@app.route("/author_results",methods=['GET', 'POST'])
+def author_results_page():
+    global author_global
+    global url_author_global
+    global author_name_global
+    myob2 = Keysearch.KeySearch(author_global, t = 'researcher')
+    myob2.fill_results()
+    results = myob2.search_results
+    if request.method == "POST":
+        processURL = request.form.get('graph')
+        if processURL:
+            for i in results:
+                if i['link'] == processURL:
+                    author_name_global = i['title']
+            url_author_global = processURL
+            return redirect(url_for('author_results_publications_page'))
+    return render_template("results.html",cursor=results,cursor2='author')
+
+@app.route("/author_results_publications",methods=['GET', 'POST'])
+def author_results_publications_page():
+    global author_global
+    global url_author_global
+    global url_global
+    global author_name_global
+    myob2 = Author.Author(url_author_global)
+    myob2.fill_publications()
+    results = myob2.publications
+    if len(results) == 0:
+        flash('Warning!')
+        flash('No publication has been published by author!')
+        return redirect(url_for('dashboard_page'))
+    if request.method == "POST":
+        processURL = request.form.get('graph')
+        if processURL:
+            url_global = processURL
+            return redirect(url_for('graph_page'))
+    return render_template("results.html",cursor=results,cursor2='author_publication',author=author_name_global)    
+
 
 @app.route("/results",methods=['GET', 'POST'])
 def results_page():
@@ -102,10 +151,11 @@ def results_page():
         if processURL:
             url_global = processURL
             return redirect(url_for('graph_page'))
-    return render_template("results.html",cursor=results)
+    return render_template("results.html",cursor=results,cursor2='keyword')
 
 @app.route("/graph",methods=['GET', 'POST'])
 def graph_page():
+    global url_global
     url = url_global
     obje = forms.ShowMe()
     try:
@@ -137,6 +187,11 @@ def graph_page():
             os.remove('./static/pdf/your_paper.pdf') 
         except:
             print('x')
+    ######################################################################
+    processURL = request.form.get('graph')
+    if processURL:
+        url_global = processURL
+        return redirect(url_for('graph_page'))
     ######################################################################
     processDownloadCit = request.form.get('download_cit')
     if processDownloadCit:
@@ -380,15 +435,26 @@ def followed_users_page(user_key):
     obje = forms.ShowMe()
     if request.method == 'POST':
         processUnFollow = request.form.get('unfollow')
+        processFollow = request.form.get('follow')
         if processUnFollow:
             source = current_user.username
             target = request.form["unfollow"]
             obje.Follow_delete(source,target)
             flash("You have unfollowed ",target)
             cursor = obje.Followed_users(user_key)
-            return render_template('followed_users.html',cursor=cursor, username=user_key, currentuser=current_user.username)
+            cursor2 = obje.Followed_users(current_user.username)
+            return render_template('followed_users.html',cursor=cursor, username=user_key, currentuser=current_user.username,cursor2=cursor2)
+        elif processFollow:
+            source = current_user.username
+            target = request.form["follow"]
+            obje.Follow_add(source,target)
+            flash("You have followed ",target)
+            cursor = obje.Followed_users(user_key)
+            cursor2 = obje.Followed_users(current_user.username)
+            return render_template('followed_users.html',cursor=cursor, username=user_key, currentuser=current_user.username,cursor2=cursor2)
     cursor = obje.Followed_users(user_key)
-    return render_template('followed_users.html',cursor=cursor, username=user_key, currentuser=current_user.username)
+    cursor2 = obje.Followed_users(current_user.username)
+    return render_template('followed_users.html',cursor=cursor, username=user_key, currentuser=current_user.username,cursor2=cursor2)
 app.add_url_rule("/profile/followed_users/<user_key>", view_func=followed_users_page, methods=['GET','POST'])
 
 @app.route('/profile/bookmarks',methods=['GET','POST'])
@@ -399,17 +465,24 @@ def bookmarks_page(user_key):
     if request.method == "POST":
         process = request.form.get('buttonName')
         processURL = request.form.get('graph')
+        processADD = request.form.get('addToYourBookmark')
         if (process == "add"):
             return redirect(url_for("bookmark_adding_page"))
         elif processURL:
             url_global = processURL
             return redirect(url_for('graph_page'))
-        elif(process == "delete"):
+        elif process == "delete":
             form_bookmark_keys = request.form.getlist("bookmark_keys")
             for form_bookmark_key in form_bookmark_keys:
                 obje.Bookmark_delete(int(form_bookmark_key))
             cursor = obje.Bookmarks(current_user.username)
             return render_template('bookmarks.html',cursor=cursor, username=current_user.username, currentuser=current_user.username)
+        elif processADD == "addToYourBookmark":
+            form_bookmark_keys = request.form.getlist("bookmark_keys")
+            for form_bookmark_key in form_bookmark_keys:
+                obje.Bookmark_copy(int(form_bookmark_key), current_user.username)
+            cursor = obje.Bookmarks(user_key)
+            return render_template('bookmarks.html',cursor=cursor, username=user_key, currentuser=current_user.username)
     cursor = obje.Bookmarks(user_key)
     return render_template('bookmarks.html',cursor=cursor, username=user_key, currentuser=current_user.username, url_global=url_global)
 app.add_url_rule("/profile/bookmarks/<user_key>", view_func=bookmarks_page)
@@ -443,6 +516,8 @@ def delete_my_account_page(user_key):
                 return redirect(url_for("delete_my_account_page",user_key=current_user.username))
             else:
                 obje.Delete_account(current_user.username)
+                flash("DELETE")
+                flash("Account Deleted!")
                 return redirect(url_for('home_page'))
         return render_template('delete_my_account.html',username=user_key)
     return redirect(url_for("dashboard_page"))
@@ -458,31 +533,34 @@ def user_key(user_key):
     return render_template("other_profiles.html",username=user_key,cursor=cursor[0][0])
 app.add_url_rule("/profile/<user_key>", view_func=user_key)
 
+@app.route("/profile/followers")
+def followers_page(user_key):
+    obje = forms.ShowMe()
+    if request.method == 'POST':
+        processUnFollow = request.form.get('unfollow')
+        processFollow = request.form.get('follow')
+        if processUnFollow:
+            source = current_user.username
+            target = request.form["unfollow"]
+            obje.Follow_delete(source,target)
+            flash("You have unfollowed ",target)
+            cursor = obje.Users_that_follows(user_key)
+            cursor2 = obje.Followed_users(current_user.username)
+            return render_template('followers.html',cursor=cursor, username=user_key, currentuser=current_user.username,cursor2=cursor2)
+        elif processFollow:
+            source = current_user.username
+            target = request.form["follow"]
+            obje.Follow_add(source,target)
+            flash("You have followed ",target)
+            cursor = obje.Users_that_follows(user_key)
+            cursor2 = obje.Followed_users(current_user.username)
+            return render_template('followers.html',cursor=cursor, username=user_key, currentuser=current_user.username,cursor2=cursor2)
 
-HandlerRoutine = WINFUNCTYPE(wintypes.BOOL, wintypes.DWORD)
-
-def _ctrl_handler(sig):
-    """Handle a sig event and return 0 to terminate the process"""
-    if sig == signal.CTRL_C_EVENT:
-        dir_path = Path('./static/pdf')
-        shutil.rmtree(dir_path)
-    elif sig == signal.CTRL_BREAK_EVENT:
-        dir_path = Path('./static/pdf')
-        shutil.rmtree(dir_path)
-    else:
-        print("UNKNOWN EVENT")
-    return 0
-
-ctrl_handler = HandlerRoutine(_ctrl_handler)
-
-
-SetConsoleCtrlHandler = ctypes.windll.kernel32.SetConsoleCtrlHandler
-SetConsoleCtrlHandler.argtypes = (HandlerRoutine, wintypes.BOOL)
-SetConsoleCtrlHandler.restype = wintypes.BOOL
-
+    cursor = obje.Users_that_follows(user_key)
+    cursor2 = obje.Followed_users(current_user.username)
+    return render_template('followers.html',cursor=cursor, username=user_key, currentuser=current_user.username,cursor2=cursor2)
+app.add_url_rule("/profile/followers/<user_key>", view_func=followers_page, methods=['GET','POST'])
+    
 
 if __name__ == "__main__":
-    if not SetConsoleCtrlHandler(ctrl_handler, 1):
-        print("Unable to add SetConsoleCtrlHandler")
-        exit(-1)
     app.run(debug=True)

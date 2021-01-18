@@ -188,7 +188,7 @@
         <div id="capture"> 
         <div class="arg-Graph panel" id="arg-Graph">
              <div id="item1" class="arg-Graph_item" style="top: 300px; background:rgb(18, 119, 18)" 
-             data-neighbors="{% for row in cursor %}item{{loop.index+1}}{%if loop.index < cursor|length %},{% endif %}{% endfor %}"
+             data-neighbors="{% for row in cursor %}{%if loop.index < 15 %}item{{loop.index+1}}{% endif %}{%if loop.index < cursor|length %},{% endif %}{% endfor %}"
              onclick="document.getElementById('iiitem1').style.display='block'">
                 Your Article
                 <span  class="arg-Graph_connector-handler"></span>
@@ -210,7 +210,7 @@
                  <div id="item{{loop.index+1}}" class="arg-Graph_item" style="left: 10px; top: {{(loop.index-1)*47+50}}px;" onclick="document.getElementById('iiitem{{loop.index+1}}').style.display='block'">
 
                 {% endif %} 
-                    {{row['title'][0:7]}}
+                    {{row['title'][0:15]}}
                     <!-- <span id="some-element" style="left: {{loop.index*78}}px; top: 460px;">
                     {{row['title']}}
                   </span> -->
@@ -239,7 +239,7 @@
 
                 {% endif %} 
 
-                {{row['title'][0:7]}}
+                {{row['title'][0:15]}}
                     <!-- <span id="some-element" style="left: {{loop.index*78}}px; top: 460px;">
                     {{row['title']}}
                   </span> -->
@@ -263,7 +263,7 @@
                 <p>{{your_paper['title']}}</p>
                 <h3>Paper Link</h3>
                 <a href="{{your_paper_link}}" target="_blank">Click here to go to paper page!</a><br>
-
+                
                 <h3>Download Paper (If link is available)</h3>
                 {% if your_paper['download_link'] != 'No downloadable Content' %}
                 <a href="{{url_for('static',filename='pdf/your_paper.pdf')}}" target="_blank" >Click to download the paper!</a><br>
@@ -275,7 +275,7 @@
                 {% if current_user.is_authenticated %}
                     {% set ns = namespace(found=false) %} 
                     {% for row2 in cursorBookmarks %}
-                        {% if row2[1] == your_paper['link']|string %}
+                        {% if row2[1] == your_paper_link|string %}
                             {% set ns.found = true %}
                         {% endif %}
                     {% endfor %} 
@@ -288,6 +288,7 @@
                       <button type="submit" class="w3-button w3-teal w3-round" value="{{your_paper_link}}SPLITSPLIT{{your_paper['title']}}" name="add">
                         <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
                         Add This Paper To Bookmark  </strong></button>
+                        
                         {% endif %}
                         
                 {% endif %}
@@ -368,13 +369,18 @@
                 <h3>Download Paper (If link is available)</h3>
                 {% if row['link'] == processDownloadCit %}
                 <a href="{{url_for('static',filename='pdf/cit_paper.pdf')}}" target="_blank" >Click to download the paper!</a><br>
+                {% elif row['full_text'] == False %}
+                <b> PLEASE GO TO PAPER LINK TO REQUEST THE PAPER PDF</b><br>
                 {% else %}
+                
                 <button type="submit" class="w3-button w3-red w3-round" value="{{row['link']}}" name="download_cit">
                     <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
-                    Show The Download Link </strong></button>
+                    Show The Download Link {{row['download_link']}} </strong></button>
                    <br> 
                 {% endif %}
-                
+                <button  type="submit" class="w3-button w3-blue-grey w3-round" value="{{row['link']}}" name="graph">
+                    <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
+                    Go To Graph Page!</strong></button>
                 {% if current_user.is_authenticated %}
                     {% set ns = namespace(found=false) %} 
                     {% for row2 in cursorBookmarks %}
@@ -382,7 +388,7 @@
                             {% set ns.found = true %}
                         {% endif %}
                     {% endfor %} 
-                    
+                    <br>
                       {% if ns.found %}
                       <button type="submit" class="w3-button w3-teal w3-round" value="{{row['link']}}" name="delete">
                         <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
@@ -394,6 +400,8 @@
                         {% endif %}
 
                 {% endif %}
+                            
+                
                 </form>
                 
 		  </div>
@@ -422,13 +430,17 @@
                 <form method="POST">
                 {% if row['link'] == processDownloadRef %}
                 <a href="{{url_for('static',filename='pdf/ref_paper.pdf')}}" target="_blank" >Click to download the paper!</a><br>
+                {% elif row['full_text'] == False %}
+                <b> PLEASE GO TO PAPER LINK TO REQUEST THE PAPER PDF</b><br>
                 {% else %}
                 <button type="submit" class="w3-button w3-red w3-round" value="{{row['link']}}" name="download_ref">
                     <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
                     Show The Download Link </strong></button>
                    <br> 
                 {% endif %}
-
+                <button  type="submit" class="w3-button w3-blue-grey w3-round" value="{{row['link']}}" name="graph">
+                    <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
+                    Go To Graph Page!</strong></button>
                 
                 {% if current_user.is_authenticated %}
                     {% set ns = namespace(found=false) %} 
@@ -437,7 +449,7 @@
                             {% set ns.found = true %}
                         {% endif %}
                     {% endfor %} 
-                    
+                    <br>
                         {% if ns.found %}
                         <button type="submit" class="w3-button w3-teal w3-round" value="{{row['link']}}" name="delete">
                         <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
@@ -449,6 +461,8 @@
                         {% endif %}
 
                 {% endif %}
+                    
+                
                 </form>
                 
             </div>

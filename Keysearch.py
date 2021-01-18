@@ -4,14 +4,15 @@ import requests
 
 
 class KeySearch(object):
-    def __init__(self, query):
+    def __init__(self, query, t='publication'):
         self.query = query
         self.search_query = '%20'.join(self.query.split(' '))
-        self.link = 'https://www.researchgate.net/search.Search.html?type=publication&query=' + self.search_query
+        self.link = 'https://www.researchgate.net/search.Search.html?type={}&query='.format(t) + self.search_query
         self.pat = '<a class="nova-e-link nova-e-link--color-inherit nova-e-link--theme-bare"'
         self.lst = []
         self.request_page = None
         self.request_text = None
+        self.t = t
         self.search_results = []
     def __str__(self):
         return self.search_query
@@ -37,8 +38,9 @@ class KeySearch(object):
             y = y.span()
             search_region = self.request_text[i[0]:i[1]+y[1]]
             regions.append(search_region)
-        
         for region in regions:
+            if self.t == 'researcher' and 'profile' not in region:
+              continue
             l_s = re.search('href="', region)
             l_s = l_s.span()[1]
             l_e = re.search('[?]', region)
@@ -49,13 +51,14 @@ class KeySearch(object):
             t_e = re.search('</a>', region)
             t_e = t_e.span()[0]
             title = region[t_s:t_e]
+            link = 'https://www.researchgate.net/' + link
             search_result = {'link':link, 'title':title}
             self.search_results.append(search_result)
 
 
-#a = KeySearch('AI, IOT')
-#a.fill_results()
-#print(a.search_results)
+# a = KeySearch('AI, IOT', t = 'researcher')
+# a.fill_results()
+# print(a.search_results)
 
 
 

@@ -41,10 +41,10 @@ INIT_STATEMENTS = [
                 ID serial,
                 username VARCHAR(10) NOT NULL UNIQUE,
                 info VARCHAR(500) NOT NULL,
-                city VARCHAR(255),
-                email VARCHAR(100) UNIQUE,
-                university VARCHAR(255),
-                telephone VARCHAR(15),
+                city VARCHAR(80),
+                email VARCHAR(80) UNIQUE,
+                university VARCHAR(80),
+                telephone VARCHAR(20),
                 PRIMARY KEY (ID)
             )
             """,

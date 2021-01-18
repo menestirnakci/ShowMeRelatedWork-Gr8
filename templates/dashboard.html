@@ -133,9 +133,12 @@ https://templatemo.com/tm-521-get-ready
                     {% if cursor == 'URL' %}
                          <a onLoad="javascript:makeURL()" ></a>
                          <a id="warningURL">
-                    {% else %}
+                    {% elif cursor == 'KEYWORD'%}
                          <a onLoad="javascript:makeKeyWord()" ></a>
                          <a id="warningKeyword">
+                    {% else %}
+                         <a onLoad="javascript:makeAuthors()" ></a>
+                         <a id="warningAuthors">
                     {% endif %}
 
                     <div class="col-md-12 col-sm-12">
@@ -148,6 +151,7 @@ https://templatemo.com/tm-521-get-ready
                                              <div id="Demo" class="w3-dropdown-content w3-bar-block w3-card-4 w3-animate-zoom w3-round" style="right:0">
                                              <a href="#" class="w3-bar-item w3-button w3-round" onclick="makeURL()">URL</a>
                                              <a href="#" class="w3-bar-item w3-button w3-round" onclick="makeKeyWord()">KeyWord</a>
+                                             <a href="#" class="w3-bar-item w3-button w3-round" onclick="makeAuthors()">Authors</a>
                                              </div>
                                            </div>
                                    </span>
@@ -156,6 +160,11 @@ https://templatemo.com/tm-521-get-ready
                               {% with messages = get_flashed_messages() %}
                                    {% if messages[0] == 'Warning!' %}
                                    <div class="alert">
+                                        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+                                        <strong>{{ messages[1] }} </strong>  
+                                   </div>
+                                   {% elif messages[0] == 'DELETE' %}
+                                   <div class="alert info">
                                         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
                                         <strong>{{ messages[1] }} </strong>  
                                    </div>
@@ -200,7 +209,37 @@ https://templatemo.com/tm-521-get-ready
                                    <div class="subscribe-form">
                                      <form action="" method="POST">
                                         
-                                       <input type="text" name="keyword" class="form-control" placeholder="Enter your KeyWord" required="" style="width: 100%;">
+                                       <input type="text" name="keyword" class="form-control" placeholder="Enter your KeyWord like IoT, AI, Smart Homes" required="" style="width: 100%;">
+                                        <br>
+                                     <div>
+                                       <button type="submit" class="w3-button w3-teal w3-round">
+                                         <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
+                                           Search</strong></button>
+     
+                                        
+                                        </div>
+                                        
+                                     </form>
+                                     <form method="POST">
+                                        <br>
+                                        <button type="submit" class="w3-button w3-deep-orange w3-round" name="recommended" value="recommended">
+                                             <strong style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"> 
+                                                  Recommended Paper</strong></button>
+                                     </form>
+                                   </div>
+                              </div>
+
+                              <!------------------------------------------------------------------------------------------------------------------------->
+                              <div id="author" style="display: none;">
+          
+                                   <h1>Please enter the name of author you want to search!</h1>
+                                   <br>
+                                   <!-- You can change the date time in init.js file -->
+                                   
+                                   <div class="subscribe-form">
+                                     <form action="" method="POST">
+                                        
+                                       <input type="text" name="author" class="form-control" placeholder="Enter the Author Name" required="" style="width: 100%;">
                                         <br>
                                      <div>
                                        <button type="submit" class="w3-button w3-teal w3-round">
@@ -222,7 +261,6 @@ https://templatemo.com/tm-521-get-ready
 
 
 
-
                          </div>
                     </div>
                </div>
@@ -236,10 +274,17 @@ https://templatemo.com/tm-521-get-ready
           function makeKeyWord(){
                document.getElementById('keyword').style.display="inline";
                document.getElementById('url').style.display="none";
+               document.getElementById('author').style.display="none";
           }
           function makeURL(){
                document.getElementById('url').style.display="inline";
                document.getElementById('keyword').style.display="none";
+               document.getElementById('author').style.display="none";
+          }
+          function makeAuthors(){
+               document.getElementById('keyword').style.display="none";
+               document.getElementById('url').style.display="none";
+               document.getElementById('author').style.display="inline";
           }
 
      </script>
